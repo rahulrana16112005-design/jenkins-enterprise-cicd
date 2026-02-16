@@ -1,0 +1,14 @@
+pipeline {
+  agent { dockerfile { filename 'jenkins/agent.Dockerfile' } }
+
+  stages {
+    stage('Precheck') { steps { sh 'scripts/precheck.sh' } }
+    stage('Build') { steps { sh 'docker build -t yourdockerhub/demo:${BUILD_NUMBER} app/' } }
+    stage('Scan') { steps { sh 'scripts/security_scan.sh' } }
+    stage('Deploy') { steps { sh 'scripts/deploy.sh' } }
+  }
+
+  post {
+    failure { sh 'scripts/rollback.sh' }
+  }
+}
