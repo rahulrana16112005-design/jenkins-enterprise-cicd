@@ -1,2 +1,3 @@
 #!/bin/bash
-kubectl rollout undo deployment/ranga-app
+kubectl rollout undo deployment/ranga-app || true
+

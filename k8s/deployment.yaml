@@ -13,8 +13,7 @@ spec:
         app: ranga
     spec:
       containers:
-      - name: ranga
-        image: nginx
-        ports:
-        - containerPort: 80
-
+        - name: ranga
+          image: yourdockerhub/demo:latest   # 👈 Jenkins will update tag
+          ports:
+            - containerPort: 80

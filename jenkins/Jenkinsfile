@@ -4,6 +4,7 @@ pipeline {
             image '6242c31ed8b7acdd636a5ceeee0df75a85a680cd'
             args '''
               --network=host
+              -v /var/run/docker.sock:/var/run/docker.sock
               -v $HOME/.kube:/home/jenkins/.kube
               -v $HOME/.minikube:/home/jenkins/.minikube
             '''
@@ -13,7 +14,7 @@ pipeline {
     environment {
         IMAGE_NAME = "yourdockerhub/demo"
         IMAGE_TAG  = "${BUILD_NUMBER}"
-        KUBECONFIG = "/home/jenkins/.kube/config.jenkins"
+        KUBECONFIG = "/home/jenkins/.kube/config"
     }
 
     stages {
@@ -44,7 +45,7 @@ pipeline {
         stage('Security Scan (Trivy)') {
             steps {
                 sh '''
-                  trivy image --severity HIGH,CRITICAL --exit-code 0 $IMAGE_NAME:$IMAGE_TAG
+                  trivy image $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
@@ -52,28 +53,17 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 sh '''
-                  kubectl apply -f k8s/deployment.yaml
-                  kubectl apply -f k8s/service.yaml
+                  kubectl apply -f k8s/
+                  kubectl rollout status deployment/ranga-app
                 '''
             }
         }
     }
 
     post {
-        success {
-            echo "✅ Pipeline completed successfully!"
-            sh '''
-              kubectl get pods
-              kubectl get svc
-            '''
-        }
-
         failure {
             echo "❌ Pipeline failed. Rolling back..."
-            sh '''
-              kubectl rollout undo deployment/ranga-app || true
-            '''
+            sh 'kubectl rollout undo deployment/ranga-app || true'
         }
     }
 }
-
