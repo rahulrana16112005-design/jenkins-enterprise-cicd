@@ -1,5 +1,10 @@
 pipeline {
-  agent { dockerfile { filename 'jenkins/agent.Dockerfile' } }
+  agent {
+    dockerfile {
+        filename 'jenkins/agent.Dockerfile'
+        args '-v /var/run/docker.sock:/var/run/docker.sock'
+    }
+}
 
   stages {
     stage('Precheck') { steps { sh 'scripts/precheck.sh' } }
