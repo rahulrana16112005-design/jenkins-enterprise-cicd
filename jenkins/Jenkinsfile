@@ -1,19 +1,79 @@
 pipeline {
-  agent {
-    dockerfile {
-        filename 'jenkins/agent.Dockerfile'
-        args '-v /var/run/docker.sock:/var/run/docker.sock'
+    agent {
+        docker {
+            image '6242c31ed8b7acdd636a5ceeee0df75a85a680cd'
+            args '''
+              --network=host
+              -v $HOME/.kube:/home/jenkins/.kube
+              -v $HOME/.minikube:/home/jenkins/.minikube
+            '''
+        }
+    }
+
+    environment {
+        IMAGE_NAME = "yourdockerhub/demo"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+        KUBECONFIG = "/home/jenkins/.kube/config.jenkins"
+    }
+
+    stages {
+
+        stage('Precheck') {
+            steps {
+                sh '''
+                  echo "Docker version:"
+                  docker --version
+
+                  echo "Kubectl version:"
+                  kubectl version --client
+
+                  echo "Cluster check:"
+                  kubectl get nodes
+                '''
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                  docker build -t $IMAGE_NAME:$IMAGE_TAG app/
+                '''
+            }
+        }
+
+        stage('Security Scan (Trivy)') {
+            steps {
+                sh '''
+                  trivy image --severity HIGH,CRITICAL --exit-code 0 $IMAGE_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Deploy to Minikube') {
+            steps {
+                sh '''
+                  kubectl apply -f k8s/deployment.yaml
+                  kubectl apply -f k8s/service.yaml
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline completed successfully!"
+            sh '''
+              kubectl get pods
+              kubectl get svc
+            '''
+        }
+
+        failure {
+            echo "❌ Pipeline failed. Rolling back..."
+            sh '''
+              kubectl rollout undo deployment/ranga-app || true
+            '''
+        }
     }
 }
 
-  stages {
-    stage('Precheck') { steps { sh 'scripts/precheck.sh' } }
-    stage('Build') { steps { sh 'docker build -t yourdockerhub/demo:${BUILD_NUMBER} app/' } }
-    stage('Scan') { steps { sh 'scripts/security_scan.sh' } }
-    stage('Deploy') { steps { sh 'scripts/deploy.sh' } }
-  }
-
-  post {
-    failure { sh 'scripts/rollback.sh' }
-  }
-}
