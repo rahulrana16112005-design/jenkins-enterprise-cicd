@@ -11,11 +11,12 @@ pipeline {
         }
     }
 
-    environment {
-        IMAGE_NAME = "yourdockerhub/demo"
-        IMAGE_TAG  = "${BUILD_NUMBER}"
-        KUBECONFIG = "/home/jenkins/.kube/config"
-    }
+environment {
+    IMAGE_NAME = "yourdockerhub/demo"
+    IMAGE_TAG  = "${BUILD_NUMBER}"
+    KUBECONFIG = "/home/jenkins/.kube/config.jenkins"
+}
+
 
     stages {
 
