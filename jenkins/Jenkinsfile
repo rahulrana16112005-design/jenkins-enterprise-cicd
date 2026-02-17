@@ -11,42 +11,32 @@ pipeline {
         }
     }
 
-environment {
-    IMAGE_NAME = "yourdockerhub/demo"
-    IMAGE_TAG  = "${BUILD_NUMBER}"
-    KUBECONFIG = "/home/jenkins/.kube/config.jenkins"
-}
-
+    environment {
+        IMAGE_NAME = "yourdockerhub/demo"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+    }
 
     stages {
 
         stage('Precheck') {
             steps {
                 sh '''
-                  echo "Docker version:"
                   docker --version
-
-                  echo "Kubectl version:"
                   kubectl version --client
-
-                  echo "Cluster check:"
                   kubectl get nodes
                 '''
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                sh '''
-                  docker build -t $IMAGE_NAME:$IMAGE_TAG app/
-                '''
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG app/'
             }
         }
 
         stage('Security Scan (Trivy)') {
             steps {
-                sh '''
-                  trivy image $IMAGE_NAME:$IMAGE_TAG
-                '''
+                sh 'trivy image $IMAGE_NAME:$IMAGE_TAG'
             }
         }
 
