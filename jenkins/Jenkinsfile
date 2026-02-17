@@ -34,7 +34,6 @@ environment {
                 '''
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 sh '''
