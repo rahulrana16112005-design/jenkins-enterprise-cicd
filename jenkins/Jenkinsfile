@@ -21,8 +21,13 @@ pipeline {
         stage('Precheck') {
             steps {
                 sh '''
+                  echo "=== Docker Version ==="
                   docker --version
+
+                  echo "=== Kubectl Version ==="
                   kubectl version --client
+
+                  echo "=== Cluster Status ==="
                   kubectl get nodes
                 '''
             }
@@ -30,30 +35,55 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG app/'
+                sh '''
+                  echo "=== Building Docker Image ==="
+                  docker build -t $IMAGE_NAME:$IMAGE_TAG app/
+                '''
             }
         }
 
         stage('Security Scan (Trivy)') {
             steps {
-                sh 'trivy image $IMAGE_NAME:$IMAGE_TAG'
+                sh '''
+                  echo "=== Running Trivy Scan ==="
+                  trivy image --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$IMAGE_TAG
+                '''
             }
         }
 
         stage('Deploy to Minikube') {
             steps {
                 sh '''
+                  echo "=== Updating image tag in deployment ==="
+                  sed -i "s|image: yourdockerhub/demo:.*|image: yourdockerhub/demo:${IMAGE_TAG}|" k8s/deployment.yaml
+
+                  echo "=== Applying Kubernetes manifests ==="
                   kubectl apply -f k8s/
-                  kubectl rollout status deployment/ranga-app
+
+                  echo "=== Waiting for rollout ==="
+                  kubectl rollout status deployment/ranga-app --timeout=120s
                 '''
             }
         }
     }
 
     post {
+        success {
+            echo "✅ Deployment successful!"
+        }
+
         failure {
             echo "❌ Pipeline failed. Rolling back..."
-            sh 'kubectl rollout undo deployment/ranga-app || true'
+            sh '''
+              kubectl get deployment ranga-app && \
+              kubectl rollout undo deployment/ranga-app || true
+            '''
+        }
+
+        always {
+            echo "📦 Build Number: ${BUILD_NUMBER}"
+            echo "🖼️ Image Used: ${IMAGE_NAME}:${IMAGE_TAG}"
         }
     }
 }
+

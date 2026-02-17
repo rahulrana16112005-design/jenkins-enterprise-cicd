@@ -2,11 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ranga-app
+  labels:
+    app: ranga
 spec:
   replicas: 1
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 120
+
   selector:
     matchLabels:
       app: ranga
+
   template:
     metadata:
       labels:
@@ -14,6 +20,31 @@ spec:
     spec:
       containers:
         - name: ranga
-          image: yourdockerhub/demo:latest   # 👈 Jenkins will update tag
+          image: yourdockerhub/demo:1   # 🔁 Jenkins will auto-update tag
+          imagePullPolicy: IfNotPresent
+
           ports:
             - containerPort: 80
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
