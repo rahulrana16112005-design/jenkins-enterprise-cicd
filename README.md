@@ -8,7 +8,7 @@ This project demonstrates a production-grade Jenkins CI/CD pipeline implemented 
 
 The pipeline automates the complete software delivery lifecycle, including build, security scanning, containerization, Kubernetes deployment, health validation, and automated rollback, following industry-standard CI/CD and DevSecOps principles.
 
-Key Objectives
+Key Objectives :-
 
 Design and implement a realistic CI/CD workflow using Jenkins Declarative Pipelines
 
@@ -166,3 +166,4 @@ Author
 
 Rahul Rana
 DevOps | CI/CD | Docker | Kubernetes | Jenkins
+
