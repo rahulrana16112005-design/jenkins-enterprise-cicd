@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
         - name: ranga
-          image: yourdockerhub/demo:manual
-          imagePullPolicy: IfNotPresent
+          image: rahul798/demo:25
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 80
