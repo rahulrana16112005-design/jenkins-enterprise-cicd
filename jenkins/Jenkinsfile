@@ -8,8 +8,6 @@ pipeline {
               -v /var/run/docker.sock:/var/run/docker.sock
               -v /home/lenovo/.kube:/home/lenovo/.kube
               -v /home/lenovo/.minikube:/home/lenovo/.minikube
-
-
             '''
         }
     }
@@ -21,6 +19,16 @@ pipeline {
     }
 
     stages {
+
+        stage('Bind Docker to Minikube') {
+            steps {
+                sh '''
+                  echo "=== Binding Docker to Minikube Docker Daemon ==="
+                  eval $(minikube docker-env)
+                  docker info | grep -i name
+                '''
+            }
+        }
 
         stage('Precheck') {
             steps {
@@ -41,7 +49,7 @@ pipeline {
             steps {
                 sh '''
                   echo "=== Building Docker Image ==="
-                  docker build -t $IMAGE_NAME:$IMAGE_TAG app/
+                  docker build -t ${IMAGE_NAME}:${IMAGE_TAG} app/
                 '''
             }
         }
@@ -50,7 +58,7 @@ pipeline {
             steps {
                 sh '''
                   echo "=== Running Trivy Scan ==="
-                  trivy image --severity HIGH,CRITICAL --exit-code 1 $IMAGE_NAME:$IMAGE_TAG
+                  trivy image --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}:${IMAGE_TAG}
                 '''
             }
         }
@@ -59,7 +67,7 @@ pipeline {
             steps {
                 sh '''
                   echo "=== Updating image tag in deployment ==="
-                  sed -i "s|image: yourdockerhub/demo:.*|image: yourdockerhub/demo:${IMAGE_TAG}|" k8s/deployment.yaml
+                  sed -i "s|image: yourdockerhub/demo:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" k8s/deployment.yaml
 
                   echo "=== Applying Kubernetes manifests ==="
                   kubectl apply -f k8s/
@@ -90,4 +98,3 @@ pipeline {
         }
     }
 }
-
