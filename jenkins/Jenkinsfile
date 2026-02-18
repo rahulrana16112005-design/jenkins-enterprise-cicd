@@ -3,6 +3,7 @@ pipeline {
         docker {
             image '6242c31ed8b7acdd636a5ceeee0df75a85a680cd'
             args '''
+              --user root
               --network=host
               -v /var/run/docker.sock:/var/run/docker.sock
               -v /home/lenovo/.kube:/home/lenovo/.kube
