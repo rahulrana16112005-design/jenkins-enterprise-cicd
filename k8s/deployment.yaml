@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: ranga
-          image: yourdockerhub/demo:1   # 🔁 Jenkins will auto-update tag
+          image: yourdockerhub/demo:manual
           imagePullPolicy: IfNotPresent
 
           ports:
