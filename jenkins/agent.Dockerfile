@@ -1,7 +1,7 @@
 FROM jenkins/inbound-agent:latest
 
 USER root
-
+ENV HOME=/home/lenovo
 # Docker + kubectl
 RUN apt-get update && \
     apt-get install -y docker.io curl wget ca-certificates && \
