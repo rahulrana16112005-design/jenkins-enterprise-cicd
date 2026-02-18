@@ -1,4 +1,4 @@
-Enterprise-Grade Jenkins CI/CD Pipeline
+##Enterprise-Grade Jenkins CI/CD Pipeline
 
 Production-Style DevSecOps Implementation (Local | Cloud-Independent)
 
@@ -113,6 +113,19 @@ kubectl
 Minikube
 
 No cloud account or AWS access is required.
+
+ Monitoring Stack
+
+This project uses Prometheus and Grafana to monitor Kubernetes workloads.
+
+ Metrics Collected
+- Pod health
+- CPU usage
+- Memory usage
+
+ Access
+- Prometheus: kubectl port-forward
+- Grafana: kubectl port-forward
 
 How to Run the Project
 1. Start the Kubernetes Cluster
