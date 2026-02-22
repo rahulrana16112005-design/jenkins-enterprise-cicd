@@ -50,10 +50,12 @@ stage('Deploy Monitoring (Prometheus & Grafana)') {
     steps {
         sh '''
           echo "=== Deploying Monitoring Stack ==="
-          kubectl apply -f monitoring/
+          kubectl apply -f monitoring/grafana-deployment.yaml
+          kubectl apply -f monitoring/prometheus-deployment.yaml
         '''
     }
 }
+
 
         stage('Build Docker Image') {
             steps {
