@@ -8,7 +8,7 @@ This project demonstrates a production-grade Jenkins CI/CD pipeline implemented 
 
 The pipeline automates the complete software delivery lifecycle, including build, security scanning, containerization, Kubernetes deployment, health validation, and automated rollback, following industry-standard CI/CD and DevSecOps principles.
 
-Key Objectives :-
+#Key Objectives :-
 
 Design and implement a realistic CI/CD workflow using Jenkins Declarative Pipelines
 
@@ -20,7 +20,7 @@ Ensure deployment reliability using health checks and automated rollback
 
 Follow idempotent automation practices (install tools only if missing)
 
-CI/CD Architecture Flow
+#CI/CD Architecture Flow
 
 Developer pushes code
 ↓
@@ -42,7 +42,7 @@ Deployment Health Validation
 ↓
 Automatic Rollback on Failure
 
-Technology Stack
+#Technology Stack
 
 Jenkins – CI/CD orchestration using Declarative Pipelines
 
@@ -58,7 +58,7 @@ Shell Scripting – Automation and control logic
 
 Nginx – Demo web application
 
-Project Structure
+#Project Structure
 jenkins-enterprise-cicd/
 ├── app/
 │   ├── index.html
@@ -80,7 +80,7 @@ jenkins-enterprise-cicd/
 │   └── prometheus.yaml
 └── README.md
 
-Core Features
+#Core Features
 
 Declarative Jenkins pipeline (no freestyle jobs)
 
@@ -100,7 +100,7 @@ Idempotent installation logic to prevent redundant installs
 
 Prerequisites
 
-The following tools must be installed on the Ubuntu system:
+#The following tools must be installed on the Ubuntu system:
 
 Java 17 or higher
 
@@ -114,7 +114,7 @@ Minikube
 
 No cloud account or AWS access is required.
 
- Monitoring Stack
+#Monitoring Stack
 
 This project uses Prometheus and Grafana to monitor Kubernetes workloads.
 
@@ -154,16 +154,16 @@ kubectl get svc
 minikube service demo-service
 
 
-If successful, the deployed application will open in the browser.
+#If successful, the deployed application will open in the browser.
 
-Rollback Strategy
+#Rollback Strategy
 
 If any pipeline stage fails, Jenkins automatically triggers a Kubernetes rollback.
 The previous stable deployment is restored using:
 
 kubectl rollout undo deployment/demo-app
 
-Security Implementation
+#Security Implementation
 
 Docker images are scanned using Trivy before deployment
 
