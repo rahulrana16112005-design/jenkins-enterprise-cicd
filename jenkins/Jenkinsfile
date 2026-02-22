@@ -45,6 +45,16 @@ pipeline {
             }
         }
 
+
+stage('Deploy Monitoring (Prometheus & Grafana)') {
+    steps {
+        sh '''
+          echo "=== Deploying Monitoring Stack ==="
+          kubectl apply -f monitoring/
+        '''
+    }
+}
+
         stage('Build Docker Image') {
             steps {
                 sh '''
