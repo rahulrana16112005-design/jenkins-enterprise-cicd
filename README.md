@@ -156,6 +156,28 @@ minikube service demo-service
 
 #If successful, the deployed application will open in the browser.
 
+## 🧪 Real Debugging Experience
+
+While building this project, things did not work smoothly at all.
+
+I faced multiple issues like:
+- Broken Jenkins builds  
+- Pipeline failures at different stages  
+- Docker image build and push errors  
+- Kubernetes deployment not working properly  
+
+At one point, I had around **25 failed builds** continuously.
+
+But after debugging each issue step by step, I finally got a **successful build on attempt #26** ✅
+
+This phase helped me understand:
+- How to read logs and trace errors  
+- How different tools in the pipeline are connected  
+- Why small misconfigurations can break the entire system  
+
+This was the most important part of my learning, because I didn’t just run the pipeline —  
+I actually fixed it when it broke.
+
 #Rollback Strategy
 
 If any pipeline stage fails, Jenkins automatically triggers a Kubernetes rollback.
